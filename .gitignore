@@ -2,4 +2,5 @@
 .idea/*
 .classpath*
 .project*
+.target/*
 *.iml
