@@ -60,11 +60,11 @@ public class ClosestPairTest {
 	public void closestPair_validInput_validResult() {
 	    this.closestPair.quickSort(this.inputPoints, Point.xComparator);
 		double actualDistance = closestPair.findPairWithClosestDistance(inputPoints);
-		System.out.println(String.format("%s %s %s", this.closestPair.point1, this.closestPair.point2, actualDistance));
+		System.out.println(String.format("%s %s %s", this.closestPair.getPoint1(), this.closestPair.getPoint2(), actualDistance));
 		
 		assertEquals(expectedDistance, actualDistance, 0.0001);
-		assertEquals(expectedPoint1, closestPair.point1);
-		assertEquals(expectedPoint2, closestPair.point2);
+		assertEquals(expectedPoint1, closestPair.getPoint1());
+		assertEquals(expectedPoint2, closestPair.getPoint2());
 	}
 	
 }

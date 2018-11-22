@@ -4,23 +4,51 @@ import java.io.IOException;
 import java.util.Comparator;
 
 /**
- * For a set of points in a coordinates system (10000 maximum), ClosestPair class calculates the two
- * closest points.
+ * For a set of points in a coordinates system, ClosestPair class calculates the two closest points.
  */
 public final class ClosestPair {
 
-    // Input data, maximum 10000
-    public Point point1;
-    public Point point2;
+    private Point point1;
+    private Point point2;
 
     private double globalMinDistance = Double.MAX_VALUE;
     private int secondCount = 0;
-    private double minValue = 0; // Minimum length
+    private double minValue = 0;
 
+    public Point getPoint1() {
+        return point1;
+    }
+
+    public void setPoint1(Point point1) {
+        this.point1 = point1;
+    }
+
+    public Point getPoint2() {
+        return point2;
+    }
+
+    public void setPoint2(Point point2) {
+        this.point2 = point2;
+    }
+
+    /**
+     * Quick Sort
+     *
+     * @param points        array of points
+     * @param comparator    comparator based on x or y
+     */
     public void quickSort(final Point[] points, final Comparator<Point> comparator) {
         doQuickSort(points, 0, points.length - 1, comparator);
     }
 
+    /**
+     * Quick Sort implementation
+     *
+     * @param points        array of points
+     * @param first         first index (usually 0)
+     * @param last          last index (usually points.length - 1)
+     * @param comparator    comparator based on x or y
+     */
     private void doQuickSort(final Point[] points, final int first, final int last, final Comparator<Point> comparator) {
         if (first < last) {
             final int pivot = partition(points, first, last, comparator);
@@ -29,6 +57,15 @@ public final class ClosestPair {
         }
     }
 
+    /**
+     * Partitioning an array of points
+     *
+     * @param points        array of points
+     * @param first         first index (usually 0)
+     * @param last          last index (usually points.length - 1)
+     * @param comparator    comparator based on x or y
+     * @return pivot
+     */
     private int partition(final Point[] points, final int first, final int last, final Comparator<Point> comparator) {
         final int pivot = last;
         int firstGreaterThanPivot = first - 1;
@@ -46,12 +83,25 @@ public final class ClosestPair {
         return firstGreaterThanPivot;
     }
 
+    /**
+     * Swaps 2 points
+     *
+     * @param points    array of points
+     * @param first     point 1
+     * @param second    point 2
+     */
     private void swap(final Point[] points, final int first, final int second) {
         Point temp = points[first];
         points[first] = points[second];
         points[second] = temp;
     }
 
+    /**
+     * Finds pair with closest distance
+     *
+     * @param inputPoints   array of points
+     * @return closest distance
+     */
     public double findPairWithClosestDistance(final Point[] inputPoints) {
         return doFindPairWithClosestDistance(inputPoints, inputPoints.length);
     }
@@ -59,23 +109,24 @@ public final class ClosestPair {
     /**
      * Finds closest pair
      *
-     * @param a         array stored before divide
+     * @param a         array of points
      * @param indexNum  number coordinates divideArray
      * @return minimum distance
      */
     private double doFindPairWithClosestDistance(final Point[] a, final int indexNum) {
         Point[] divideArray = new Point[indexNum];
-        System.arraycopy(a, 0, divideArray, 0, indexNum); // Copy previous array
+        System.arraycopy(a, 0, divideArray, 0, indexNum);
 
-        int totalNum = indexNum; // number of coordinates in the divideArray
-        int divideX = indexNum / 2; // Intermediate value for divide
+        int totalNum = indexNum;        // number of coordinates in the divideArray
+        int divideX = indexNum / 2;     // Intermediate value for divide
 
         // divide - left array
         Point[] leftArray = new Point[divideX];
         // divide-right array
         Point[] rightArray = new Point[totalNum - divideX];
 
-        if (indexNum <= 3) { // If the number of coordinates is 3 or less
+        if (indexNum <= 3) {
+            // If the number of coordinates is 3 or less
             return bruteForce(divideArray);
         }
         // divide-left array
@@ -83,10 +134,10 @@ public final class ClosestPair {
         // divide-right array
         System.arraycopy(divideArray, divideX, rightArray, 0, totalNum - divideX);
 
-        double minLeftArea = 0; // Minimum length of left array
-        double minRightArea = 0; // Minimum length of right array
+        double minLeftArea = 0;         // Minimum length of left array
+        double minRightArea = 0;        // Minimum length of right array
 
-        minLeftArea = doFindPairWithClosestDistance(leftArray, divideX); // recursive closestPair
+        minLeftArea = doFindPairWithClosestDistance(leftArray, divideX);    // recursive closestPair
         minRightArea = doFindPairWithClosestDistance(rightArray, totalNum - divideX);
         // window size (= minimum length)
         minValue = Math.min(minLeftArea, minRightArea);
@@ -150,7 +201,7 @@ public final class ClosestPair {
     /**
      * Creates window.  Set the size for creating a window and creating a new array for the coordinates in the window
      *
-     * @param divideArray   array to divide
+     * @param divideArray   array of points to divide
      * @param totalNum      number of coordinates in the divideArray
      * @param divideX       intermediate value for divide
      * @return window
@@ -159,7 +210,7 @@ public final class ClosestPair {
         for (int i = 0; i < totalNum; i++) {
             double xGap = Math.abs(divideArray[divideX].x - divideArray[i].x);
             if (xGap < minValue) {
-                secondCount++; // size of the array
+                secondCount++;          // size of the array
             } else {
                 if (divideArray[i].x > divideArray[divideX].x) {
                     break;
@@ -172,8 +223,9 @@ public final class ClosestPair {
         int k = 0;
         for (int i = 0; i < totalNum; i++) {
             double xGap = Math.abs(divideArray[divideX].x - divideArray[i].x);
-            if (xGap < minValue) { // if it's inside a window
-                firstWindow[k] = divideArray[i]; // put in an array
+            if (xGap < minValue) {
+                // if it's inside a window
+                firstWindow[k] = divideArray[i];    // put in an array
                 k++;
             } else {
                 if (divideArray[i].x > divideArray[divideX].x) {
@@ -219,7 +271,7 @@ public final class ClosestPair {
     /**
      * Main function: execute class
      *
-     * @param args (IN Parameter) <br>
+     * @param args
      * @throws IOException If an input or output exception occurred
      */
     public static void main(final String[] args) {
@@ -238,21 +290,26 @@ public final class ClosestPair {
         inputPoints[10] = new Point(17, 13);
         inputPoints[11] = new Point(9, 12);
 
-        ClosestPair cp = new ClosestPair();
-
+        // Print input data
         System.out.println("Input data");
         System.out.println("Number of points: " + inputPoints.length);
         for (int i = 0; i < inputPoints.length; i++) {
             System.out.println("x: " + inputPoints[i].x + ", y: " + inputPoints[i].y);
         }
 
-        cp.quickSort(inputPoints, Point.xComparator); // Sorting by x value
+        // Quick sorting by x value
+        ClosestPair cp = new ClosestPair();
+        cp.quickSort(inputPoints, Point.xComparator);
+        // Print sort result
+        System.out.println("Quick sort result:");
+        for (int i = 0; i < inputPoints.length; i++) {
+            System.out.println("x: " + inputPoints[i].x + ", y: " + inputPoints[i].y);
+        }
 
+        // Find pair with closest distance
         double result; // minimum distance
-
         result = cp.findPairWithClosestDistance(inputPoints);
-        // ClosestPair start
-        // minimum distance coordinates and distance output
+        // Print minimum distance coordinates and distance output
         System.out.println("Output Data");
         System.out.println("(" + cp.point1.x + ", " + cp.point1.y + ")");
         System.out.println("(" + cp.point2.x + ", " + cp.point2.y + ")");

@@ -64,8 +64,8 @@ public class Point {
         return String.format("(%s,%s)", this.x, this.y);
     }
     
-    public static Comparator<Point> xComparator = Comparator.comparingDouble(point -> point.x);
+    public static final Comparator<Point> xComparator = Comparator.comparingDouble(point -> point.x);
     
-    public static Comparator<Point> yComparator = Comparator.comparingDouble(point -> point.y);
+    public static final Comparator<Point> yComparator = Comparator.comparingDouble(point -> point.y);
 
 }
